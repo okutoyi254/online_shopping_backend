@@ -17,24 +17,15 @@ public class Payments {
     @Id
     private String transactionCode;
 
-    @Column(nullable = false)
-    private Long customerId;
-
-    @Column(nullable = false)
-    private Long orderId;
-
     private double totalAmount;
 
     private LocalDateTime paymentDate;
 
-    private double discount;
-
     private double payedAmount;
 
-
-
     @OneToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id",nullable = false,unique = true)
     private Order order;
+
 
 }

@@ -33,6 +33,6 @@ public class Products {
     @JoinColumn(name = "category_id")
     private ProductsCategory category;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<OrderItem>orderItems=new ArrayList<>();
 }

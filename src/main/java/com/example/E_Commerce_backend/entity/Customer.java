@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Builder
 @Entity
-@Table(name = "customers")
+@Table(name = "customer")
 public class Customer {
 
     @Id
@@ -35,7 +35,7 @@ public class Customer {
     @Column
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Order> orders;
 
 }
