@@ -15,8 +15,6 @@ public class CreateAccountRequest {
     private  Long id;
 
     @NotEmpty(message ="Id number is required")
-    private Long identityNo;
-    @NotBlank(message = "this field is required")
     private String firstName;
     @NotBlank(message = "this field is required")
     private String lastName;
