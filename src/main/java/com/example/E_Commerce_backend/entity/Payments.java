@@ -15,12 +15,16 @@ import java.time.LocalDateTime;
 public class Payments {
 
     @Id
+    @Column(name = "transaction_code")
     private String transactionCode;
 
+    @Column(name = "total_amount")
     private double totalAmount;
 
+    @Column(name = "payment_date")
     private LocalDateTime paymentDate;
 
+    @Column(name = "payment_amount")
     private double payedAmount;
 
     @OneToOne

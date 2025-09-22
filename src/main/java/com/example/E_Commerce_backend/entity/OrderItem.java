@@ -25,9 +25,17 @@ public class OrderItem {
     @MapsId("productId")
     @JoinColumn(name = "product_id")
     private Products product;
-    private double unit_price;
+
+    @Column(name = "unit_price")
+    private double unitPrice;
+
+    @Column(name = "quantity")
     private Integer quantity;
+
+    @Column(name = "total_cost")
     private  double totalCost;
+
+    @Column(name = "discount")
     private  double discount;
 
 }

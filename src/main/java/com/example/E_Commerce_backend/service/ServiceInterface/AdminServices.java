@@ -1,9 +1,15 @@
 package com.example.E_Commerce_backend.service.ServiceInterface;
 
-import org.hibernate.query.Page;
+import com.example.E_Commerce_backend.entity.Customer;
+import com.example.E_Commerce_backend.entity.Order;
+import com.example.E_Commerce_backend.entity.Products;
+import org.springframework.data.domain.Page;
+
+
+import java.awt.print.Pageable;
 
 public interface AdminServices {
-    Page viewAllProducts();
-    Page viewAllCustomers();
-    Page viewAllPendingOrders();
+    Page<Products> viewAllProducts(Pageable pageable);
+    Page<Customer>viewAllCustomers();
+    Page<Order>viewAllPendingOrders();
 }

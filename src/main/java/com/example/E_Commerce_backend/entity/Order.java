@@ -33,13 +33,9 @@ public class Order {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @OneToOne
-    private Payments payments;
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<OrderItem>orderItems=new ArrayList<>();
 
-    @OneToOne(mappedBy = "order",cascade =CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "payment_id")
-    private Payments payment;
+
 }
