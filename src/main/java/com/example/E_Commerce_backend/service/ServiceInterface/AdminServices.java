@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import java.awt.print.Pageable;
 
 public interface AdminServices {
-    Page<Products> viewAllProducts(Pageable pageable);
+    Page<Products> viewAllProducts(Pageable pageable,int categoryID);
     Page<Customer>viewAllCustomers();
     Page<Order>viewAllPendingOrders();
 }

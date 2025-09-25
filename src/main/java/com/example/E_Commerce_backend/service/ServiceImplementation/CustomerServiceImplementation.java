@@ -2,16 +2,10 @@ package com.example.E_Commerce_backend.service.ServiceImplementation;
 
 import com.example.E_Commerce_backend.dto.AddToCart;
 import com.example.E_Commerce_backend.dto.CreateAccountRequest;
-import com.example.E_Commerce_backend.entity.Cart;
-import com.example.E_Commerce_backend.entity.CartItem;
-import com.example.E_Commerce_backend.entity.Customer;
-import com.example.E_Commerce_backend.entity.Products;
+import com.example.E_Commerce_backend.entity.*;
 import com.example.E_Commerce_backend.exceptions.ItemNotFoundException;
 import com.example.E_Commerce_backend.exceptions.PhoneNumberAlreadyRegisteredException;
-import com.example.E_Commerce_backend.repository.CartItemRepository;
-import com.example.E_Commerce_backend.repository.CartRepository;
-import com.example.E_Commerce_backend.repository.CustomerRepository;
-import com.example.E_Commerce_backend.repository.ProductsRepository;
+import com.example.E_Commerce_backend.repository.*;
 import com.example.E_Commerce_backend.service.ServiceInterface.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -27,19 +21,31 @@ import java.util.Optional;
 public class CustomerServiceImplementation implements CustomerService {
     private final CustomerRepository customerRepository;
     private final ProductsRepository productsRepository;
-    private CartRepository cartRepository;
-    private CartItemRepository cartItemRepository;
-    List<Cart> cartList=new ArrayList<>();
+    private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
+    private final UserRepository userRepository;
 
-    public CustomerServiceImplementation(CustomerRepository customerRepository, ProductsRepository productsRepository) {
+    public CustomerServiceImplementation(CustomerRepository customerRepository, ProductsRepository productsRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, UserRepository userRepository) {
         this.customerRepository = customerRepository;
         this.productsRepository = productsRepository;
+        this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
+        this.userRepository = userRepository;
     }
+
+
     public void createAccount(@Valid @RequestBody CreateAccountRequest createAccount){
         if(customerRepository.existsByEmail(createAccount.getEmail())||
                 customerRepository.existsByPhoneNo(createAccount.getPhoneNumber())){
             throw new PhoneNumberAlreadyRegisteredException("Phone number already exists!");
+
         }
+
+        User user=new User();
+        user.setUsername(createAccount.getEmail());
+        user.setRole("CUSTOMER");
+        user.setPassword(createAccount.getPassword());
+
         Customer customer=new Customer();
         customer.setEmail(createAccount.getEmail());
         customer.setPassword(createAccount.getPassword());
@@ -47,7 +53,10 @@ public class CustomerServiceImplementation implements CustomerService {
         customer.setLastName(createAccount.getLastName());
         customer.setPhoneNumber(createAccount.getPhoneNumber());
         customer.setHomeAddress(createAccount.getHomeAddress());
+        customer.setUser(user);
         customerRepository.save(customer);
+
+
 
         Cart cart=new Cart();
         cart.setCustomer(customer);
@@ -61,7 +70,8 @@ public class CustomerServiceImplementation implements CustomerService {
 
     @Override
     public Page<Products> viewMyRecommendations(Long customerId, Pageable pageable) {
-        return null;
+        //Recommendations implementation
+        return  null;
     }
 
     @Override
@@ -93,7 +103,10 @@ public class CustomerServiceImplementation implements CustomerService {
 
     @Override
     public void removeProductFromCart(Long productId) {
-
+        Cart cart=cartRepository.findByCustomerId(2L);
+       CartItem cartItem=cartItemRepository.findByProductId(productId);
+       cart.getCartItems().remove(cartItem);
+       cartRepository.save(cart);
     }
 
 

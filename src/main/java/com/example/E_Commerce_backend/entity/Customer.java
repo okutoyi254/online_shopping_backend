@@ -38,6 +38,8 @@ public class Customer {
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Order> orders;
 
-
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
 
 }
