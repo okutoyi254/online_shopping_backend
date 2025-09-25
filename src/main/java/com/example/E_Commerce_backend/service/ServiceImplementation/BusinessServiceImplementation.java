@@ -35,12 +35,12 @@ public class BusinessServiceImplementation implements BusinessServices {
     }
 
     @Override
-    public List<Products> productsWithHighestSales() {
+    public List<Product> productsWithHighestSales() {
         return List.of();
     }
 
     @Override
-    public List<Products> productsWithLowestSales() {
+    public List<Product> productsWithLowestSales() {
         return List.of();
     }
 
@@ -59,7 +59,7 @@ public class BusinessServiceImplementation implements BusinessServices {
             throw new InsufficientAccountBalanceException("You have insufficient balance to complete the transaction");
         }
 
-        Cart cart = cartRepository.findByCustomerId(customerId);
+        Cart cart = cartRepository.findByCustomer_customerId(customerId);
         if (cart == null || cart.getCartItems() == null) {
             throw new RuntimeException("No items available in the cart to place an order");
         }
@@ -96,14 +96,14 @@ public class BusinessServiceImplementation implements BusinessServices {
 
     // persist to the orderItem database
     public void persistToOrderItems(Long customerId,Order order) {
-        Cart cart = cartRepository.findByCustomerId(customerId);
+        Cart cart = cartRepository.findByCustomer_customerId(customerId);
         if (cart == null || cart.getCartItems() == null) {
             throw new RuntimeException("No items available in the cart to place an order");
         }
         for (CartItem cartItem : cart.getCartItems()) {
             OrderItem orderItem = new OrderItem();
 
-            orderItem.setProduct(cartItem.getProducts());
+            orderItem.setProduct(cartItem.getProduct());
             orderItem.setOrder(order);
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setUnitPrice(cartItem.getUnitPrice());

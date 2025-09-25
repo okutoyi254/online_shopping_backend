@@ -21,6 +21,6 @@ public class ProductsCategory {
     private String categoryName;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "category",orphanRemoval = true)
-    private List<Products> products;
+    private List<Product> products;
 
 }

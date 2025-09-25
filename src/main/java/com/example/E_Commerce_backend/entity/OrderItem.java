@@ -24,7 +24,7 @@ public class OrderItem {
     @ManyToOne
     @MapsId("productId")
     @JoinColumn(name = "product_id")
-    private Products product;
+    private Product product;
 
     @Column(name = "unit_price")
     private double unitPrice;

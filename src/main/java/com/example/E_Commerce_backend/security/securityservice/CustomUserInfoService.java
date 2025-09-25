@@ -28,7 +28,7 @@ public class CustomUserInfoService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Optional<com.example.E_Commerce_backend.entity.User> userInfo=userRepository.findByPhoneNumber(username);
+        Optional<com.example.E_Commerce_backend.entity.User> userInfo=userRepository.findByUsername(username);
 
         if(userInfo.isEmpty()){
             throw  new UsernameNotFoundException("Invalid username or password");

@@ -30,5 +30,5 @@ public class CartItem {
    @ManyToOne
    @MapsId("productId")
    @JoinColumn(name = "product_id")
-    private Products products;
+    private Product product;
 }

@@ -9,12 +9,11 @@ import com.example.E_Commerce_backend.repository.*;
 import com.example.E_Commerce_backend.service.ServiceInterface.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Optional;
 
 @Service
@@ -36,7 +35,7 @@ public class CustomerServiceImplementation implements CustomerService {
 
     public void createAccount(@Valid @RequestBody CreateAccountRequest createAccount){
         if(customerRepository.existsByEmail(createAccount.getEmail())||
-                customerRepository.existsByPhoneNo(createAccount.getPhoneNumber())){
+                customerRepository.existsByPhoneNumber(createAccount.getPhoneNumber())){
             throw new PhoneNumberAlreadyRegisteredException("Phone number already exists!");
 
         }
@@ -64,35 +63,35 @@ public class CustomerServiceImplementation implements CustomerService {
     }
 
     @Override
-    public Page<Products> viewAvailableProducts(Pageable pageable,int categoryId) {
-        return productsRepository.getAvailableProducts(pageable,categoryId);
+    public Page<Product> viewAvailableProducts(Pageable pageable, int categoryId) {
+        return null;
     }
 
     @Override
-    public Page<Products> viewMyRecommendations(Long customerId, Pageable pageable) {
+    public Page<Product> viewMyRecommendations(Long customerId, Pageable pageable) {
         //Recommendations implementation
         return  null;
     }
 
     @Override
     public void addProductToCart(AddToCart addToCart) {
-        Products products = productsRepository.findByProductId(addToCart.getProductId()).
+        Product product = productsRepository.findByProductId(addToCart.getProductId()).
                 orElseThrow(() -> new ItemNotFoundException("Item with the given id does`t exist"));
 
-        Cart cart = cartRepository.findByCustomerId(2L);
+        Cart cart = cartRepository.findByCustomer_customerId(2L);
         Optional<CartItem> existingItem = cart.getCartItems().stream()
-                .filter(item -> item.getProducts().getProductId().equals(products.getProductId()))
+                .filter(item -> item.getProduct().getProductId().equals(product.getProductId()))
                 .findFirst();
         if (existingItem.isPresent()) {
             CartItem cartItem = existingItem.get();
             cartItem.setQuantity(addToCart.getQuantity());
-            cartItem.setTotalPrice(addToCart.getQuantity() * products.getPrice());
+            cartItem.setTotalPrice(addToCart.getQuantity() * product.getPrice());
         } else {
             CartItem cartItem = new CartItem();
-            cartItem.setProducts(products);
+            cartItem.setProduct(product);
             cartItem.setCart(cart);
             cartItem.setQuantity(addToCart.getQuantity());
-            cartItem.setUnitPrice(products.getPrice());
+            cartItem.setUnitPrice(product.getPrice());
             cartItem.setDiscount(0);
             cartItem.setTotalPrice(0D);
             cartItemRepository.save(cartItem);
@@ -103,8 +102,8 @@ public class CustomerServiceImplementation implements CustomerService {
 
     @Override
     public void removeProductFromCart(Long productId) {
-        Cart cart=cartRepository.findByCustomerId(2L);
-       CartItem cartItem=cartItemRepository.findByProductId(productId);
+        Cart cart=cartRepository.findByCustomer_customerId(2L);
+       CartItem cartItem=cartItemRepository.findByProduct_productId(productId);
        cart.getCartItems().remove(cartItem);
        cartRepository.save(cart);
     }
