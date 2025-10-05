@@ -32,6 +32,10 @@ public class Customer {
     @Column
     private String homeAddress;
 
+    @OneToOne
+    @JoinColumn(name = "customer_id",nullable = false,unique = true)
+    private Cart cart;
+
     @Column
     private String password;
 
@@ -41,5 +45,6 @@ public class Customer {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
+
 
 }

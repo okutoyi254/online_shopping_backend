@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class CreateAccountRequest {
 
-    private  Long id;
-
     @NotEmpty(message ="Id number is required")
     private String firstName;
     @NotBlank(message = "this field is required")

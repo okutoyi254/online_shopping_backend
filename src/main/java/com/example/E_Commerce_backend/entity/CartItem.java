@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -31,4 +33,17 @@ public class CartItem {
    @MapsId("productId")
    @JoinColumn(name = "product_id")
     private Product product;
+
+   @Override
+    public boolean equals(Object o){
+       if(this==o) return true;
+
+       if(!(o instanceof CartItem that)) return false;
+       return Objects.equals(cartItemId,that.cartItemId);
+   }
+
+   @Override
+    public int hashCode(){
+       return Objects.hash(cartItemId);
+   }
 }

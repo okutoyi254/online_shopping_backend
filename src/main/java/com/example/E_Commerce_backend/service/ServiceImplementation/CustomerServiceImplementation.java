@@ -33,7 +33,7 @@ public class CustomerServiceImplementation implements CustomerService {
     }
 
 
-    public void createAccount(@Valid @RequestBody CreateAccountRequest createAccount){
+    public Customer createAccount(@Valid @RequestBody CreateAccountRequest createAccount){
         if(customerRepository.existsByEmail(createAccount.getEmail())||
                 customerRepository.existsByPhoneNumber(createAccount.getPhoneNumber())){
             throw new PhoneNumberAlreadyRegisteredException("Phone number already exists!");
@@ -53,12 +53,14 @@ public class CustomerServiceImplementation implements CustomerService {
         customer.setPhoneNumber(createAccount.getPhoneNumber());
         customer.setHomeAddress(createAccount.getHomeAddress());
         customer.setUser(user);
-        customerRepository.save(customer);
 
 
 
         Cart cart=new Cart();
         cart.setCustomer(customer);
+        cartRepository.save(cart);
+
+        return customerRepository.save(customer);
 
     }
 
@@ -74,29 +76,45 @@ public class CustomerServiceImplementation implements CustomerService {
     }
 
     @Override
-    public void addProductToCart(AddToCart addToCart) {
-        Product product = productsRepository.findByProductId(addToCart.getProductId()).
-                orElseThrow(() -> new ItemNotFoundException("Item with the given id does`t exist"));
+    public CartItem addProductToCart(AddToCart addToCart) {
+        // 1. Validate product
+        Product product = productsRepository.findByProductId(addToCart.getProductId())
+                .orElseThrow(() -> new ItemNotFoundException("Item with the given id does not exist"));
 
+        // 2. Get customer’s cart (hardcoded 2L for now, better to pass customerId)
         Cart cart = cartRepository.findByCustomer_customerId(2L);
+
+        // 3. Check if product already in cart
         Optional<CartItem> existingItem = cart.getCartItems().stream()
                 .filter(item -> item.getProduct().getProductId().equals(product.getProductId()))
                 .findFirst();
+
+        CartItem cartItem;
+
         if (existingItem.isPresent()) {
-            CartItem cartItem = existingItem.get();
+            // Update existing
+            cartItem = existingItem.get();
             cartItem.setQuantity(addToCart.getQuantity());
             cartItem.setTotalPrice(addToCart.getQuantity() * product.getPrice());
         } else {
-            CartItem cartItem = new CartItem();
+            // Create new
+            cartItem = new CartItem();
             cartItem.setProduct(product);
             cartItem.setCart(cart);
             cartItem.setQuantity(addToCart.getQuantity());
             cartItem.setUnitPrice(product.getPrice());
             cartItem.setDiscount(0);
-            cartItem.setTotalPrice(0D);
+            cartItem.setTotalPrice(addToCart.getQuantity() * product.getPrice());
+
             cartItemRepository.save(cartItem);
+            cart.getCartItems().add(cartItem); // ensure cart relationship is updated
         }
+
+        // 4. Save the cart (to maintain consistency)
         cartRepository.save(cart);
+
+        // 5. Return the updated/created cartItem
+        return cartItem;
     }
 
 
